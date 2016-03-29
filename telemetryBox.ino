@@ -34,15 +34,15 @@ float lightIntensity;
 // connection settings
 STARTUP(WiFi.selectAntenna(ANT_EXTERNAL)); // use the u.FL antenna, get rid of this if not using an antenna
 float batterySOCmin = 40.0; // minimum battery state of charge needed for short wakeup time
-unsigned long wakeUpTimeoutShort = 5*60; // wake up every 5 mins when battery SOC > batterySOCmin
-unsigned long wakeUpTimeoutLong = 15*60; // wake up every 15 mins during long sleep, when battery is lower
+unsigned long wakeUpTimeoutShort = 300; // wake up every 5 mins when battery SOC > batterySOCmin
+unsigned long wakeUpTimeoutLong = 900; // wake up every 15 mins during long sleep, when battery is lower
 unsigned long connectedTime; // millis() at the time we actually get connected, used to see how long it takes to connect
 unsigned long connectionTime; // difference between connectedTime and startTime
 
 // for updating software
 bool waitForUpdate = false; // for updating software
-unsigned long updateTimeout = 10*60*1000; // 10 min timeout for waiting for software update
-unsigned long communicationTimeout = 5*60*1000; // wait 5 mins before sleeping
+unsigned long updateTimeout = 600000; // 10 min timeout for waiting for software update
+unsigned long communicationTimeout = 300000; // wait 5 mins before sleeping
 unsigned long bootupStartTime;
 
 // for publish and subscribe events
