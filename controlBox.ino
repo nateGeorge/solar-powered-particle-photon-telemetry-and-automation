@@ -51,7 +51,6 @@ int relayControl(String relayState)
 {
 	if (relayState == "on") {
 		pumpOn = true;
-		Particle.publish(eventPrefix + "/waterTankPump/pumpOn", boolToText(pumpOn));
 		digitalWrite(relayPin, HIGH);
 		relayStartTime = millis();
 		ThingSpeak.setField(1, 1); // our "pump on" field
@@ -59,7 +58,6 @@ int relayControl(String relayState)
 	}
 	else if (relayState == "off") {
 		pumpOn = false;
-		Particle.publish(eventPrefix + "/waterTankPump/pumpOn", boolToText(pumpOn));
 		digitalWrite(relayPin, LOW);
 		ThingSpeak.setField(1, 0); // our "pump on" field
 		return 1;
