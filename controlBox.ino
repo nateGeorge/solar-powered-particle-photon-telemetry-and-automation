@@ -81,7 +81,6 @@ void autoPumpControl() {
 		success = relayControl("off");
 	} else {
 		ThingSpeak.setField(1, boolToNum(pumpOn)); // our "pump on" field
-		Particle.publish(eventPrefix + "/waterTankPump/pumpOn", boolToText(pumpOn));
 	}
 }
 
@@ -97,6 +96,7 @@ void recordThingSpeakData() {
 		ThingSpeak.writeFields(myWriteChannelNumber, myWriteAPIKey);
 		ThingSpeak.setField(2,0); // reset PIR motion sensor field to 'no motion detected'
 		lastMeasureTime = millis();
+		Particle.publish(eventPrefix + "/waterTankPump/pumpOn", boolToText(pumpOn));
 	}
 }
 
