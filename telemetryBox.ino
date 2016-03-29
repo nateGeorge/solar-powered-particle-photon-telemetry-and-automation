@@ -88,7 +88,8 @@ void setup() {
     
     ThingSpeak.begin(client);
     
-    Particle.subscribe(eventPrefix, eventHandler, MY_DEVICES);
+	Particle.subscribe(eventPrefix + "/waterTankSensor/update", eventHandler); // MY_DEVICES doesn't allow publishes from the cloud API
+	Particle.subscribe(eventPrefix + "/waterTankPump/pumpOn", eventHandler, MY_DEVICES);
     Particle.publish(eventPrefix + "/waterTankSensor/online", "true"); // subscribe to this with the API like: curl https://api.particle.io/v1/devices/events/temp?access_token=1234
     bootupStartTime = millis();
     doTelemetry(); // always take the measurements at least once
