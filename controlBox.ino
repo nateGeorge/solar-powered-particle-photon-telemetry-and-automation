@@ -3,9 +3,6 @@
 //################### update these vars ###################
 unsigned long myWriteChannelNumber = your channel number; // e.g 101223
 const char * myWriteAPIKey = "your write API key for the pump controller channel";
-// channel we're reading water height from
-unsigned long myReadChannelNumber = 101982; // e.g 101223
-const char * myReadAPIKey = "your read API key for the telemetry channel";
 //################### update these vars ###################
 TCPClient client;
 unsigned long lastMeasureTime = 0;
