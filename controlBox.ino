@@ -13,7 +13,6 @@ unsigned long measureInterval = 60000; // can send data to thingspeak every 15s,
 
 bool pumpOn = false;
 float waterHeight = 1000; // we want to make sure the relay isn't falsely triggered on from the get-go
-float tempWaterHeight; // for reading from thingspeak and making sure it's not a bogus value
 //################### update these vars ###################
 float lowerCutoff = 20; // lowest acceptable water height, in inches
 float higherCutoff = 42; // highest acceptable water height, in inches
@@ -43,11 +42,6 @@ void setup() {
 	Particle.subscribe(eventPrefix, eventHandler, MY_DEVICES);
 
 	ThingSpeak.begin(client);
-	
-	tempWaterHeight = ThingSpeak.readFloatField(myReadChannelNumber, 1, myReadAPIKey); // don't want to read too often, or we get 0s
-	if (tempWaterHeight >=0 && tempWaterHeight <= totalDistance) {
-		waterHeight = tempWaterHeight;
-	}
 }
 
 void loop() {
@@ -105,12 +99,6 @@ void recordThingSpeakData() {
 	if (millis() - lastMeasureTime > measureInterval) {
 		ThingSpeak.writeFields(myWriteChannelNumber, myWriteAPIKey);
 		ThingSpeak.setField(2,0); // reset PIR motion sensor field to 'no motion detected'
-		
-		tempWaterHeight = ThingSpeak.readFloatField(myReadChannelNumber, 1, myReadAPIKey); // don't want to read too often, or we get 0s
-		if (tempWaterHeight >=0 && tempWaterHeight <= totalDistance) {
-			waterHeight = tempWaterHeight;
-		}
-		
 		lastMeasureTime = millis();
 	}
 }
@@ -135,5 +123,7 @@ void eventHandler(String event, String data)
 	  Particle.publish(eventPrefix + "/waterTankPump/pumpOn", boolToText(pumpOn));
   } else if (event == eventPrefix + "/waterTankSensor/online") {
 	  (data == "true") ? lastSignal = millis() : Serial.println(data);
+  } else if (event == eventPrefix + "/waterTankSensor/waterHeight") {
+      waterHeight = data.toFloat();
   }
 }

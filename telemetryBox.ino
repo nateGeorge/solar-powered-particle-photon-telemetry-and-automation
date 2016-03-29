@@ -143,6 +143,8 @@ void doTelemetry() {
     distance = duration / uSperInch; // in inches
     waterHeight = totalDistance - distance;
     ThingSpeak.setField(1, waterHeight);
+	
+	Particle.publish(eventPrefix + "/waterTankSensor/waterHeight", String(waterHeight));
     
     // BME280
     pressure = mySensorA.readFloatPressure()*29.529983/100000.0;
