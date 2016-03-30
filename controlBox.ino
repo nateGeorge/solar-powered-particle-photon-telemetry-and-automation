@@ -18,8 +18,8 @@ float totalDistance = 64; // the distance from the sensor to the bottom of the w
 int success;
 unsigned long relayStartTime;
 unsigned long lastSignal = millis();
-unsigned long pumpTimeout = 900000; // turn off the pump if haven't heard from sensor in 15 mins
-unsigned long pumpOffTime = 3600000; // make sure we don't turn on the pump more than once per hour
+unsigned long pumpTimeout = 15*60*1000; // turn off the pump if haven't heard from sensor in 15 mins
+unsigned long pumpOffTime = 60*60*1000; // make sure we don't turn on the pump more than once per hour
 long pumpOffTimeStart = -pumpOffTime; // so we can turn on pump when we startup if we need to
 
 // PIR motion sensor
@@ -74,12 +74,12 @@ void autoPumpControl() {
 			relayControl("off");
 		}
 	}
-	if (waterHeight < lowerCutoff) {
+	if (waterHeight < lowerCutoff && millis() - pumpOffTimeStart > pumpOffTime) {
 		success = relayControl("on");
 	} else if (waterHeight > higherCutoff) {
 		success = relayControl("off");
 	} else {
-		ThingSpeak.setField(1, boolToNum(pumpOn)); // our "pump on" field
+		Serial.println("not doin nothin");
 	}
 }
 
@@ -115,11 +115,10 @@ int boolToNum(bool thing)
 
 void eventHandler(String event, String data)
 {
-  if (event == eventPrefix + "/waterTankSensor/online") {
-	  Particle.publish(eventPrefix + "/waterTankPump/pumpOn", boolToText(pumpOn));
-  } else if (event == eventPrefix + "/waterTankSensor/online") {
-	  (data == "true") ? lastSignal = millis() : Serial.println(data);
-  } else if (event == eventPrefix + "/waterTankSensor/waterHeight") {
-      waterHeight = data.toFloat();
-  }
+	if (event == eventPrefix + "/waterTankSensor/online") {
+		Particle.publish(eventPrefix + "/waterTankPump/pumpOn", boolToText(pumpOn));
+		(data == "true") ? lastSignal = millis() : Serial.println(data);
+	} else if (event == eventPrefix + "/waterTankSensor/waterHeight") {
+		waterHeight = data.toFloat();
+	}
 }

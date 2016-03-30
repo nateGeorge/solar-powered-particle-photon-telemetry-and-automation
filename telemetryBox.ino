@@ -17,7 +17,7 @@ const char * myWriteAPIKey = "your api key here"; // write key here, e.g. ZQV7CR
 //################### update these vars ###################
 TCPClient client;
 unsigned long lastMeasureTime = 0;
-unsigned long measureInterval = 60000; // can send data to thingspeak every 15s, but give the matlab analysis a chance to add data too
+unsigned long measureInterval = 60*1000; // can send data to thingspeak every 15s, but give the matlab analysis a chance to add data too
 
 // ultrasonic distance sensor for water height measurement
 float uSperInch = 147; // from datasheet
@@ -34,15 +34,15 @@ float lightIntensity;
 // connection settings
 STARTUP(WiFi.selectAntenna(ANT_EXTERNAL)); // use the u.FL antenna, get rid of this if not using an antenna
 float batterySOCmin = 40.0; // minimum battery state of charge needed for short wakeup time
-unsigned long wakeUpTimeoutShort = 300; // wake up every 5 mins when battery SOC > batterySOCmin
-unsigned long wakeUpTimeoutLong = 900; // wake up every 15 mins during long sleep, when battery is lower
+unsigned long wakeUpTimeoutShort = 5*60; // wake up every 5 mins when battery SOC > batterySOCmin
+unsigned long wakeUpTimeoutLong = 15*60; // wake up every 15 mins during long sleep, when battery is lower
 unsigned long connectedTime; // millis() at the time we actually get connected, used to see how long it takes to connect
 unsigned long connectionTime; // difference between connectedTime and startTime
 
 // for updating software
 bool waitForUpdate = false; // for updating software
-unsigned long updateTimeout = 600000; // 10 min timeout for waiting for software update
-unsigned long communicationTimeout = 120000; // wait 2 mins before sleeping
+unsigned long updateTimeout = 10*60*1000; // 10 min timeout for waiting for software update
+unsigned long communicationTimeout = 2*60*1000; // wait 2 mins before sleeping
 unsigned long bootupStartTime;
 
 // for publish and subscribe events
@@ -96,7 +96,7 @@ void setup() {
 }
 
 void loop() {
-    if (waitForUpdate || millis() - bootupStartTime > communicationTimeout || batterySOC > 75.0 || pumpOn) {
+    if (waitForUpdate || millis() - bootupStartTime < communicationTimeout || batterySOC > 75.0 || pumpOn) {
         // The Photon will stay on unless the battery is less than 75% full, or if the pump is running.
         // If the battery is low, it will stay on if we've told it we want to update the firmware, until that times out (updateTimeout)
         // It will stay on no matter what for a time we set, stored in the variable communicationTimeout
