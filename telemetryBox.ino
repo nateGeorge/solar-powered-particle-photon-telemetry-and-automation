@@ -95,6 +95,7 @@ void setup() {
 	Particle.subscribe(eventPrefix + "/waterTankPump/pumpOn", eventHandler, MY_DEVICES);
     Particle.publish(eventPrefix + "/waterTankSensor/online", "true"); // subscribe to this with the API like: curl https://api.particle.io/v1/devices/events/temp?access_token=1234
     bootupStartTime = millis();
+	measureUS();
     doTelemetry(); // always take the measurements at least once
 }
 
