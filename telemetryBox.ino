@@ -126,8 +126,7 @@ void loop() {
 void measureUS() {
     // the pulseIn from the sensor needs to be read often, otherwise it gets backed up with old measurements
     // perhaps using the analog signal would be better
-    waterHeight = 0;
-    waterHeight2 = 0;
+    waterHeightSum = 0;
     for (int i = 0; i < 100; i++) {
         duration = pulseIn(A0, HIGH);
         distance = duration / uSperInch; // in inches
