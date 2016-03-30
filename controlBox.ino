@@ -18,8 +18,9 @@ float totalDistance = 64; // the distance from the sensor to the bottom of the w
 int success;
 unsigned long relayStartTime;
 unsigned long lastSignal = millis();
-unsigned long pumpTimeout = 15*60*1000; // turn off the pump if haven't heard from sensor in 15 mins
-unsigned long pumpOnTime = 15*60*1000; // pump run time in manual mode
+unsigned long pumpTimeout = 900000; // turn off the pump if haven't heard from sensor in 15 mins
+unsigned long pumpOffTime = 3600000; // make sure we don't turn on the pump more than once per hour
+long pumpOffTimeStart = -pumpOffTime; // so we can turn on pump when we startup if we need to
 
 // PIR motion sensor
 int relayPin = 0;

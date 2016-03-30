@@ -42,7 +42,7 @@ unsigned long connectionTime; // difference between connectedTime and startTime
 // for updating software
 bool waitForUpdate = false; // for updating software
 unsigned long updateTimeout = 600000; // 10 min timeout for waiting for software update
-unsigned long communicationTimeout = 300000; // wait 5 mins before sleeping
+unsigned long communicationTimeout = 120000; // wait 2 mins before sleeping
 unsigned long bootupStartTime;
 
 // for publish and subscribe events
