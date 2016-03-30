@@ -24,9 +24,12 @@ float uSperInch = 147; // from datasheet
 float distance;
 unsigned long duration;
 float waterHeight;
+float waterHeightSum;
 //################### update these vars ###################
 float totalDistance = 64; // the distance from the sensor to the bottom of the water tank
 //################### update these vars ###################
+unsigned long lastUS = 0;
+unsigned long USmeasureTime = 1000; // measure every second
 
 // photocell
 float lightIntensity;
@@ -100,6 +103,10 @@ void loop() {
         // The Photon will stay on unless the battery is less than 75% full, or if the pump is running.
         // If the battery is low, it will stay on if we've told it we want to update the firmware, until that times out (updateTimeout)
         // It will stay on no matter what for a time we set, stored in the variable communicationTimeout
+		
+		if (millis() - lastUS > USmeasureTime) { // measure waterHeight more frequently
+            measureUS();
+        }
         if (millis() - lastMeasureTime > measureInterval) {
             doTelemetry();
         }
@@ -113,6 +120,20 @@ void loop() {
                 System.sleep(SLEEP_MODE_DEEP, wakeUpTimeoutShort);
             }
     }
+}
+
+void measureUS() {
+    // the pulseIn from the sensor needs to be read often, otherwise it gets backed up with old measurements
+    // perhaps using the analog signal would be better
+    waterHeight = 0;
+    waterHeight2 = 0;
+    for (int i = 0; i < 100; i++) {
+        duration = pulseIn(A0, HIGH);
+        distance = duration / uSperInch; // in inches
+        waterHeightSum += totalDistance - distance;
+        delay(50);
+    }
+    waterHeight = waterHeightSum/100;
 }
 
 void eventHandler(String event, String data)
@@ -140,9 +161,6 @@ void doTelemetry() {
     Particle.publish(eventPrefix + "/waterTankSensor/online", "true");
     
     // water height
-    duration = pulseIn(A0, HIGH);
-    distance = duration / uSperInch; // in inches
-    waterHeight = totalDistance - distance;
     ThingSpeak.setField(1, waterHeight);
 	
 	Particle.publish(eventPrefix + "/waterTankSensor/waterHeight", String(waterHeight));
