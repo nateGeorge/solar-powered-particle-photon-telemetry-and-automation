@@ -9,6 +9,7 @@ unsigned long lastMeasureTime = 0;
 unsigned long measureInterval = 60000; // can send data to thingspeak every 15s, but once a minute is fine
 
 bool pumpOn = false;
+heardFromSensor = false;
 float waterHeight = 1000; // we want to make sure the relay isn't falsely triggered on from the get-go
 //################### update these vars ###################
 float lowerCutoff = 20; // lowest acceptable water height, in inches
@@ -20,7 +21,7 @@ unsigned long relayStartTime;
 unsigned long lastSignal = millis();
 unsigned long pumpTimeout = 15*60*1000; // turn off the pump if haven't heard from sensor in 15 mins
 unsigned long pumpOffTime = 60*60*1000; // make sure we don't turn on the pump more than once per hour
-long pumpOffTimeStart = -pumpOffTime; // so we can turn on pump when we startup if we need to
+long lastPumpTimeOff = -60*60*1000; // so we can turn on pump when we startup if we need to
 
 // PIR motion sensor
 int relayPin = 0;
@@ -69,17 +70,20 @@ int relayControl(String relayState)
 }
 
 void autoPumpControl() {
-	if (pumpOn) {
-		if (millis() - lastSignal > pumpTimeout) { // if we haven't heard from the water tanks in a while, turn off the pump
-			relayControl("off");
+	if (heardFromSensor) {
+		if (pumpOn) {
+			if (millis() - lastSignal > pumpTimeout) { // if we haven't heard from the water tanks in a while, turn off the pump
+				relayControl("off");
+			}
 		}
-	}
-	if (waterHeight < lowerCutoff && millis() - pumpOffTimeStart > pumpOffTime) {
-		success = relayControl("on");
-	} else if (waterHeight > higherCutoff) {
-		success = relayControl("off");
-	} else {
-		Serial.println("not doin nothin");
+		if (waterHeight < lowerCutoff && millis() - lastPumpTimeOff > pumpOffTime) {
+			success = relayControl("on");
+		} else if (waterHeight > higherCutoff) {
+			success = relayControl("off");
+			lastPumpTimeOff = millis();
+		} else {
+			Serial.println("not doin nothin");
+		}
 	}
 }
 
@@ -119,6 +123,7 @@ void eventHandler(String event, String data)
 		Particle.publish(eventPrefix + "/waterTankPump/pumpOn", boolToText(pumpOn));
 		(data == "true") ? lastSignal = millis() : Serial.println(data);
 	} else if (event == eventPrefix + "/waterTankSensor/waterHeight") {
+		heardFromSensor = true;
 		waterHeight = data.toFloat();
 	}
 }
