@@ -1,5 +1,14 @@
 from sseclient import SSEClient 
-import requests, re, json
+import requests, re, json, datetime
+
+def getSaveFileName():
+    now = datetime.datetime.now()
+    print 'saving log file as:'
+    print 'recorded_messages_' + now.strftime("%Y-%m-%d %H:%M") + '.txt'
+    print ''
+    return 'recorded_messages_' + now.strftime("%Y-%m-%d %H:%M") + '.txt'
+    
+saveFile = getSaveFileName()
 
 access_token = "YOUR ACCESS TOKEN HERE"
 publish_prefix_head = "myFarm" # for subscribing to incoming messages, e.g. myFarm
@@ -10,7 +19,7 @@ if r.json()['ok']==True:
 	print 'successfully sent update request'
 
 
-with open('recorded messages.txt', 'w') as record:
+with open(saveFile, 'w') as record:
 	for msg in messages:
 		event = str(msg.event).encode('utf-8')
 		data = str(msg.data).encode('utf-8')
