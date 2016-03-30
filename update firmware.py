@@ -4,9 +4,9 @@ import requests, re, json, datetime
 def getSaveFileName():
     now = datetime.datetime.now()
     print 'saving log file as:'
-    print 'recorded_messages_' + now.strftime("%Y-%m-%d %H:%M") + '.txt'
+    print 'recorded_messages_' + now.strftime("%Y-%m-%d %H-%M") + '.txt'
     print ''
-    return 'recorded_messages_' + now.strftime("%Y-%m-%d %H:%M") + '.txt'
+    return 'recorded_messages_' + now.strftime("%Y-%m-%d %H-%M") + '.txt'
     
 saveFile = getSaveFileName()
 
