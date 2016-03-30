@@ -124,8 +124,10 @@ void loop() {
 }
 
 void measureUS() {
-    // the pulseIn from the sensor needs to be read often, otherwise it gets backed up with old measurements
-    // perhaps using the analog signal would be better
+	// The pulseIn from the sensor needs to be read often, otherwise I think it can get backed up with old measurements.
+	// Perhaps using the analog signal would be better.
+	// Need to take an average of many measurements because sometimes
+	// there are outliers.
     waterHeightSum = 0;
     for (int i = 0; i < 100; i++) {
         duration = pulseIn(A0, HIGH);
