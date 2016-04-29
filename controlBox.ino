@@ -38,7 +38,7 @@ void setup() {
 	pinMode(PIRpin, INPUT);
 	digitalWrite(relayPin, LOW);
 	
-	Particle.subscribe(eventPrefix, eventHandler, MY_DEVICES);
+	Particle.subscribe(eventPrefix, eventHandler);
 
 	ThingSpeak.begin(client);
 }
