@@ -35,7 +35,7 @@ String eventPrefix = "myFarm/waterSystem"; // e.g. myFarm/waterSystem
 
 void setup() {
 	pinMode(relayPin, OUTPUT);
-	pinMode(PIRpin, INPUT);
+	pinMode(PIRpin, INPUT_PULLUP);
 	digitalWrite(relayPin, LOW);
 	
 	Particle.subscribe(eventPrefix, eventHandler);
